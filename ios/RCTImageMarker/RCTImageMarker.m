@@ -225,7 +225,7 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image, NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
     int w = image.size.width;
     int h = image.size.height;
       
@@ -288,6 +288,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image, NSString* text, MarkerP
     }
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
+    CGRect titleRect = (CGRect){ CGPointMake((w-(size.width))/2, (h-(size.height))/2), size };
+    [title drawInRect:titleRect withAttributes:attr];
     [text drawInRect:rect withAttributes:attr];
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -440,6 +442,7 @@ RCT_EXPORT_METHOD(addText: (nonnull NSDictionary *)src
 }
 
 RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
+                  title:(nonnull NSString*)title
                   text:(nonnull NSString*)text
                   position:(MarkerPosition)position
                   color:(NSString*)color
