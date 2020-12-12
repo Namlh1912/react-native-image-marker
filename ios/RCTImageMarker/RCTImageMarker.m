@@ -480,7 +480,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image, text, position, uiColor, font, scale, shadow, textBackground);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title, text, position, uiColor, font, scale, shadow, textBackground);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);
