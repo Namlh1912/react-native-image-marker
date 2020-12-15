@@ -229,6 +229,9 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     int w = image.size.width;
     int h = image.size.height;
       
+    int newImageWidth = 400;
+    int newImageHeight = 535;
+    
     NSDictionary *attr = @{
                            NSFontAttributeName: font,   //设置字体
                            NSForegroundColorAttributeName : color,      //设置字体颜色
@@ -237,9 +240,9 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     
     CGSize size = [text sizeWithAttributes:attr];
     
-    //    CGSize size = CGSizeMake(fontSize, height);
-    UIGraphicsBeginImageContextWithOptions(image.size, NO, scale);
-    [image drawInRect:CGRectMake(0, 0, w, h)];
+        CGSize newSize = CGSizeMake(newImageWidth, newImageHeight);
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, scale);
+    [image drawInRect:CGRectMake(0, 0, newImageWidth, newImageHeight)];
 
     int margin = 20;
     int posX = margin;
@@ -260,8 +263,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
             posY = h-size.height - margin;
             break;
         case BottomCenter:
-            posX = (w-(size.width))/2;
-            posY = h-size.height - margin;
+            posX = (newImageWidth-(size.width))/2;
+            posY = newImageHeight-size.height - margin*3;
             break;
         case BottomRight:
             posX = w-(size.width) - margin;
@@ -288,7 +291,7 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     }
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
-    CGRect titleRect = (CGRect){ CGPointMake((w-(size.width))/2, (h-(size.height))/2), size };
+    CGRect titleRect = (CGRect){ CGPointMake((newImageWidth-(size.width))/2, (newImageHeight-(size.height))/2), size };
     [title drawInRect:titleRect withAttributes:attr];
     [text drawInRect:rect withAttributes:attr];
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();
