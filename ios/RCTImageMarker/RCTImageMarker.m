@@ -228,9 +228,9 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
     int w = image.size.width;
     int h = image.size.height;
-    CGFloat horizontalRatio = image.size.width / self.size.width;
-        CGFloat verticalRatio = image.size.height / self.size.height;
-        CGFloat ratio;
+//    CGFloat horizontalRatio = image.size.width / self.size.width;
+//        CGFloat verticalRatio = image.size.height / self.size.height;
+//        CGFloat ratio;
     
     CGRect sizeBound = [UIScreen mainScreen].bounds;
    //CGRect sizeRect = [UIScreen mainScreen].applicationFrame;
@@ -287,8 +287,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
             posY = h-size.height - margin;
             break;
         case BottomCenter:
-            posX = (newImageWidth-(size.width))/2;
-            posY = newImageHeight-size.height - margin*2;
+            posX = (newImgWidth-(size.width))/2;
+            posY = newImgHeight-size.height - margin*2;
             break;
         case BottomRight:
             posX = w-(size.width) - margin;
@@ -319,8 +319,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
                                             options:NSStringDrawingUsesLineFragmentOrigin
                                          attributes:@{NSFontAttributeName: font}
                                             context:nil].size;
-       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), (100), labelSize };
-    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), (150), labelSize };
+       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 150), labelSize };
     [title drawInRect:titleRect withAttributes:titleAttr];
     [subTitle drawInRect:subTitleRect withAttributes:titleAttr];
     [text drawInRect:rect withAttributes:attr];
