@@ -42,6 +42,7 @@ class Marker {
       subTitle,
       text,
       titleStyle,
+      subTitleStyle,
       X,
       Y,
       color,
@@ -68,6 +69,9 @@ class Marker {
     }
     let mShadowStyle = shadowStyle || {};
     let mTextBackgroundStyle = textBackgroundStyle || {};
+    let mTitleStyle = titleStyle || {};
+    let mSubTitleStyle = subTitleStyle || {};
+
     if (!position) {
       return ImageMarker.addText(
         srcObj,
@@ -91,7 +95,8 @@ class Marker {
         title,
         subTitle,
         text,
-        titleStyle,
+        mTitleStyle,
+        mSubTitleStyle,
         position,
         color,
         fontName,

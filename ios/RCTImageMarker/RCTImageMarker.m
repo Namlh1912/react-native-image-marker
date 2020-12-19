@@ -225,7 +225,7 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
     int w = image.size.width;
     int h = image.size.height;
 //    CGFloat horizontalRatio = image.size.width / self.size.width;
@@ -258,6 +258,12 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     NSDictionary *titleAttr = @{
         NSFontAttributeName: titleFont,   //设置字体
         NSForegroundColorAttributeName : titleColor,      //设置字体颜色
+                           NSShadowAttributeName : shadow,
+                           NSParagraphStyleAttributeName:paragraphStyle
+                           };
+    NSDictionary *subTitleAttr = @{
+        NSFontAttributeName: subTitleFont,   //设置字体
+        NSForegroundColorAttributeName : subTitleColor,      //设置字体颜色
                            NSShadowAttributeName : shadow,
                            NSParagraphStyleAttributeName:paragraphStyle
                            };
@@ -316,13 +322,17 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
     CGSize labelSize = [title boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
-                                            options:NSStringDrawingUsesLineFragmentOrigin
-                                         attributes:@{NSFontAttributeName: font}
+                                            options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                         attributes:@{NSFontAttributeName: titleFont}
                                             context:nil].size;
-       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width-50)/2), 100), labelSize };
-    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width-50)/2), 150), labelSize };
+    CGSize subLabelSize = [subTitle boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
+                                            options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                         attributes:@{NSFontAttributeName: subTitleFont}
+                                            context:nil].size;
+       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-subLabelSize.width)/2), 120+labelSize.height), subLabelSize };
     [title drawInRect:titleRect withAttributes:titleAttr];
-    [subTitle drawInRect:subTitleRect withAttributes:titleAttr];
+    [subTitle drawInRect:subTitleRect withAttributes:subTitleAttr];
     [text drawInRect:rect withAttributes:attr];
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -479,6 +489,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   subTitle:(nonnull NSString*)subTitle
                   text:(nonnull NSString*)text
                   titleStyle: (nonnull NSDictionary *)titleStyle
+                  subTitleStyle: (NSDictionary *)subTitleStyle
                   position:(MarkerPosition)position
                   color:(NSString*)color
                   fontName:(NSString*)fontName
@@ -509,12 +520,20 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
             }
         }
         
-        UIFont* titleFont=nil;
-        UIColor* titleColor=nil;
+        UIFont* titleFont=[UIFont fontWithName:fontName size:fontSize];
+        UIColor* titleColor=[self getColor:color];
         if(titleStyle!= nil){
           
-            titleFont = [UIFont fontWithName:titleStyle[@"fontName"] size:[RCTConvert CGFloat: titleStyle[@"size"]]];
+            titleFont = [UIFont fontWithName:titleStyle[@"fontName"] size:[RCTConvert CGFloat: titleStyle[@"fontSize"]]];
             titleColor = [self getColor:titleStyle[@"color"]];
+        }
+        
+        UIFont* subTitleFont=[UIFont fontWithName:fontName size:fontSize];
+        UIColor* subTitleColor=[self getColor:color];
+        if(subTitleStyle!= nil){
+          
+            subTitleFont = [UIFont fontWithName:titleStyle[@"fontName"] size:[RCTConvert CGFloat: titleStyle[@"fontSize"]]];
+            subTitleColor = [self getColor:titleStyle[@"color"]];
         }
         
         // Do mark
@@ -523,7 +542,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor, scale, shadow, textBackground);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor,subTitleFont,subTitleColor, scale, shadow, textBackground);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);

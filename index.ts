@@ -51,6 +51,12 @@ export type TitleStyle = {
   color: string;
 };
 
+export type SubTitleStyle = {
+  fontName: string;
+  fontSize: number;
+  color: string;
+};
+
 export type TextMarkOption = {
   // image src, local image
   src: ImageSourcePropType;
@@ -58,6 +64,7 @@ export type TextMarkOption = {
   subTitle: string;
   text: string;
   titleStyle: TitleStyle;
+  subTitleStyle: SubTitleStyle;
   // if you set position you don't need to set X and Y
   X?: number;
   Y?: number;
@@ -111,6 +118,8 @@ export default class Marker {
       position,
       filename,
       saveFormat,
+      titleStyle,
+      subTitleStyle,
       maxSize = 2048,
     } = option;
 
@@ -128,6 +137,8 @@ export default class Marker {
 
     let mShadowStyle = shadowStyle || {};
     let mTextBackgroundStyle = textBackgroundStyle || {};
+    let mTitleStyle = titleStyle || {};
+    let mSubTitleStyle = subTitleStyle || {};
 
     if (!position) {
       return ImageMarker.addText(
@@ -152,7 +163,8 @@ export default class Marker {
         title,
         subTitle,
         text,
-        titleStyle,
+        mTitleStyle,
+        mSubTitleStyle,
         position,
         color,
         fontName,
