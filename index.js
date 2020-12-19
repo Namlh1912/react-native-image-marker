@@ -41,6 +41,7 @@ class Marker {
       title,
       subTitle,
       text,
+      titleStyle,
       X,
       Y,
       color,

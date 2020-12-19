@@ -47,7 +47,7 @@ export type TextBackgroundStyle = {
 
 export type TitleStyle = {
   fontName: string;
-  size: number;
+  fontSize: number;
   color: string;
 };
 
