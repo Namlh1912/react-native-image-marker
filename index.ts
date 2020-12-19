@@ -45,12 +45,19 @@ export type TextBackgroundStyle = {
   color: string;
 };
 
+export type TitleStyle = {
+  fontName: string;
+  size: number;
+  color: string;
+};
+
 export type TextMarkOption = {
   // image src, local image
   src: ImageSourcePropType;
   title: string;
   subTitle: string;
   text: string;
+  titleStyle: TitleStyle;
   // if you set position you don't need to set X and Y
   X?: number;
   Y?: number;
@@ -145,6 +152,7 @@ export default class Marker {
         title,
         subTitle,
         text,
+        titleStyle,
         position,
         color,
         fontName,

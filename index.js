@@ -90,6 +90,7 @@ class Marker {
         title,
         subTitle,
         text,
+        titleStyle,
         position,
         color,
         fontName,

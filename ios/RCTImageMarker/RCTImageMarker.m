@@ -225,7 +225,7 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
     int w = image.size.width;
     int h = image.size.height;
 //    CGFloat horizontalRatio = image.size.width / self.size.width;
@@ -256,8 +256,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
                            NSShadowAttributeName : shadow
                            };
     NSDictionary *titleAttr = @{
-                           NSFontAttributeName: font,   //设置字体
-                           NSForegroundColorAttributeName : color,      //设置字体颜色
+        NSFontAttributeName: titleFont,   //设置字体
+        NSForegroundColorAttributeName : titleColor,      //设置字体颜色
                            NSShadowAttributeName : shadow,
                            NSParagraphStyleAttributeName:paragraphStyle
                            };
@@ -287,8 +287,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
             posY = h-size.height - margin;
             break;
         case BottomCenter:
-            posX = (newImgWidth-(size.width))/2;
-            posY = newImgHeight-size.height - margin*2;
+            posX = (screenWidth-size.width)/2;
+            posY = screenHeight- margin*2;
             break;
         case BottomRight:
             posX = w-(size.width) - margin;
@@ -315,12 +315,12 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
 //    }
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
-    CGSize labelSize = [title boundingRectWithSize:CGSizeMake(350.f, CGFLOAT_MAX)
+    CGSize labelSize = [title boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
                                             options:NSStringDrawingUsesLineFragmentOrigin
                                          attributes:@{NSFontAttributeName: font}
                                             context:nil].size;
-       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
-    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 150), labelSize };
+       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width-50)/2), 100), labelSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width-50)/2), 150), labelSize };
     [title drawInRect:titleRect withAttributes:titleAttr];
     [subTitle drawInRect:subTitleRect withAttributes:titleAttr];
     [text drawInRect:rect withAttributes:attr];
@@ -478,6 +478,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   title:(nonnull NSString*)title
                   subTitle:(nonnull NSString*)subTitle
                   text:(nonnull NSString*)text
+                  titleStyle: (nonnull NSDictionary *)titleStyle
                   position:(MarkerPosition)position
                   color:(NSString*)color
                   fontName:(NSString*)fontName
@@ -508,13 +509,21 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
             }
         }
         
+        UIFont* titleFont=nil;
+        UIColor* titleColor=nil;
+        if(titleStyle!= nil){
+          
+            titleFont = [UIFont fontWithName:titleStyle[@"fontName"] size:[RCTConvert CGFloat: titleStyle[@"size"]]];
+            titleColor = [self getColor:titleStyle[@"color"]];
+        }
+        
         // Do mark
         UIFont* font = [UIFont fontWithName:fontName size:fontSize];
         UIColor* uiColor = [self getColor:color];
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font, scale, shadow, textBackground);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor, scale, shadow, textBackground);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);
