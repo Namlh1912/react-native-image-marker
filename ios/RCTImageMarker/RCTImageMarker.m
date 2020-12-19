@@ -225,7 +225,7 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground,NSDictionary* customImageSize){
     int w = image.size.width;
     int h = image.size.height;
 //    CGFloat horizontalRatio = image.size.width / self.size.width;
@@ -236,6 +236,11 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
    //CGRect sizeRect = [UIScreen mainScreen].applicationFrame;
     float screenWidth = sizeBound.size.width;
     float screenHeight = sizeBound.size.height;
+    
+    if(customImageSize!=nil){
+        screenWidth = [RCTConvert CGFloat:customImageSize[@"width"]];
+        screenHeight = [RCTConvert CGFloat:customImageSize[@"height"]];
+    }
     
     CGFloat newScale = MAX(screenWidth/image.size.width, screenHeight/image.size.height);
         CGFloat newImgWidth = image.size.width * newScale;
@@ -490,6 +495,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   text:(nonnull NSString*)text
                   titleStyle: (nonnull NSDictionary *)titleStyle
                   subTitleStyle: (NSDictionary *)subTitleStyle
+                  customImageSize: (NSDictionary *)customImageSize
                   position:(MarkerPosition)position
                   color:(NSString*)color
                   fontName:(NSString*)fontName
@@ -542,7 +548,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor,subTitleFont,subTitleColor, scale, shadow, textBackground);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor,subTitleFont,subTitleColor, scale, shadow, textBackground,customImageSize);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);
