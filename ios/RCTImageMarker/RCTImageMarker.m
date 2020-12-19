@@ -225,24 +225,48 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, CGFloat scale, NSShadow* shadow, TextBackground* textBackground){
     int w = image.size.width;
     int h = image.size.height;
+    CGFloat horizontalRatio = image.size.width / self.size.width;
+        CGFloat verticalRatio = image.size.height / self.size.height;
+        CGFloat ratio;
+    
+    CGRect sizeBound = [UIScreen mainScreen].bounds;
+   //CGRect sizeRect = [UIScreen mainScreen].applicationFrame;
+    float screenWidth = sizeBound.size.width;
+    float screenHeight = sizeBound.size.height;
+    
+    CGFloat newScale = MAX(screenWidth/image.size.width, screenHeight/image.size.height);
+        CGFloat newImgWidth = image.size.width * newScale;
+        CGFloat newImgHeight = image.size.height * newScale;
+    
+    CGRect imageRect = CGRectMake((screenWidth - newImgWidth)/2.0f,
+                                      (screenHeight - newImgHeight)/2.0f,
+                                  newImgWidth,
+                                  newImgHeight);
       
-    int newImageWidth = 400;
-    int newImageHeight = 535;
+
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.alignment = NSTextAlignmentCenter;
     
     NSDictionary *attr = @{
                            NSFontAttributeName: font,   //设置字体
                            NSForegroundColorAttributeName : color,      //设置字体颜色
                            NSShadowAttributeName : shadow
                            };
+    NSDictionary *titleAttr = @{
+                           NSFontAttributeName: font,   //设置字体
+                           NSForegroundColorAttributeName : color,      //设置字体颜色
+                           NSShadowAttributeName : shadow,
+                           NSParagraphStyleAttributeName:paragraphStyle
+                           };
     
     CGSize size = [text sizeWithAttributes:attr];
     
-        CGSize newSize = CGSizeMake(newImageWidth, newImageHeight);
+        CGSize newSize = CGSizeMake(screenWidth, screenHeight);
     UIGraphicsBeginImageContextWithOptions(newSize, NO, scale);
-    [image drawInRect:CGRectMake(0, 0, newImageWidth, newImageHeight)];
+    [image drawInRect:imageRect];
 
     int margin = 20;
     int posX = margin;
@@ -264,7 +288,7 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
             break;
         case BottomCenter:
             posX = (newImageWidth-(size.width))/2;
-            posY = newImageHeight-size.height - margin*3;
+            posY = newImageHeight-size.height - margin*2;
             break;
         case BottomRight:
             posX = w-(size.width) - margin;
@@ -277,22 +301,28 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
             
     }
 
-    if (textBackground != nil) {        
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSetFillColorWithColor(context, textBackground.colorBg.CGColor);
-        if([textBackground.typeBg isEqualToString:@"stretchX"]) {
-            CGContextFillRect(context, CGRectMake(0, posY - textBackground.paddingY, w, size.height + 2*textBackground.paddingY)); 
-        } else if([textBackground.typeBg isEqualToString:@"stretchY"]) {
-            CGContextFillRect(context, CGRectMake(posX - textBackground.paddingX, 0, size.width + 2*textBackground.paddingX, h));   
-        } else {
-            CGContextFillRect(context, CGRectMake(posX - textBackground.paddingX, posY - textBackground.paddingY, 
-            size.width + 2*textBackground.paddingX, size.height + 2*textBackground.paddingY)); 
-        }               
-    }
+//    if (textBackground != nil) {
+//        CGContextRef context = UIGraphicsGetCurrentContext();
+//        CGContextSetFillColorWithColor(context, textBackground.colorBg.CGColor);
+//        if([textBackground.typeBg isEqualToString:@"stretchX"]) {
+//            CGContextFillRect(context, CGRectMake(0, posY - textBackground.paddingY, w, size.height + 2*textBackground.paddingY));
+//        } else if([textBackground.typeBg isEqualToString:@"stretchY"]) {
+//            CGContextFillRect(context, CGRectMake(posX - textBackground.paddingX, 0, size.width + 2*textBackground.paddingX, h));
+//        } else {
+//            CGContextFillRect(context, CGRectMake(posX - textBackground.paddingX, posY - textBackground.paddingY,
+//            size.width + 2*textBackground.paddingX, size.height + 2*textBackground.paddingY));
+//        }
+//    }
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
-    CGRect titleRect = (CGRect){ CGPointMake((newImageWidth-(size.width))/2, (newImageHeight-(size.height))/2), size };
-    [title drawInRect:titleRect withAttributes:attr];
+    CGSize labelSize = [title boundingRectWithSize:CGSizeMake(350.f, CGFLOAT_MAX)
+                                            options:NSStringDrawingUsesLineFragmentOrigin
+                                         attributes:@{NSFontAttributeName: font}
+                                            context:nil].size;
+       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), (100), labelSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), (150), labelSize };
+    [title drawInRect:titleRect withAttributes:titleAttr];
+    [subTitle drawInRect:subTitleRect withAttributes:titleAttr];
     [text drawInRect:rect withAttributes:attr];
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -446,6 +476,7 @@ RCT_EXPORT_METHOD(addText: (nonnull NSDictionary *)src
 
 RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   title:(nonnull NSString*)title
+                  subTitle:(nonnull NSString*)subTitle
                   text:(nonnull NSString*)text
                   position:(MarkerPosition)position
                   color:(NSString*)color
@@ -483,7 +514,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image,title, text, position, uiColor, font, scale, shadow, textBackground);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font, scale, shadow, textBackground);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);
