@@ -486,7 +486,7 @@ RCT_EXPORT_METHOD(addText: (nonnull NSDictionary *)src
 
 RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   title:(nonnull NSString*)title
-                  subTitle:(nonnull NSString*)subTitle
+                  subTitle:(NSString*)subTitle
                   text:(nonnull NSString*)text
                   titleStyle: (nonnull NSDictionary *)titleStyle
                   subTitleStyle: (NSDictionary *)subTitleStyle
@@ -532,8 +532,8 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         UIColor* subTitleColor=[self getColor:color];
         if(subTitleStyle!= nil){
           
-            subTitleFont = [UIFont fontWithName:titleStyle[@"fontName"] size:[RCTConvert CGFloat: titleStyle[@"fontSize"]]];
-            subTitleColor = [self getColor:titleStyle[@"color"]];
+            subTitleFont = [UIFont fontWithName:subTitleStyle[@"fontName"] size:[RCTConvert CGFloat: subTitleStyle[@"fontSize"]]];
+            subTitleColor = [self getColor:subTitleStyle[@"color"]];
         }
         
         // Do mark
