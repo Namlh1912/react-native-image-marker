@@ -39,6 +39,7 @@ class Marker {
     const {
       src,
       title,
+      subTitle,
       text,
       X,
       Y,
