@@ -49,6 +49,7 @@ export type TextMarkOption = {
   // image src, local image
   src: ImageSourcePropType;
   title: string;
+  subTitle: string;
   text: string;
   // if you set position you don't need to set X and Y
   X?: number;
@@ -142,6 +143,7 @@ export default class Marker {
       return ImageMarker.addTextByPostion(
         srcObj,
         title,
+        subTitle,
         text,
         position,
         color,
