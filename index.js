@@ -88,6 +88,7 @@ class Marker {
       return ImageMarker.addTextByPostion(
         srcObj,
         title,
+        subTitle,
         text,
         position,
         color,
