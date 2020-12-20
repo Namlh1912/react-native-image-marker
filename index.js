@@ -72,7 +72,7 @@ class Marker {
     let mTextBackgroundStyle = textBackgroundStyle || {};
     let mTitleStyle = titleStyle || {};
     let mSubTitleStyle = subTitleStyle || {};
-    let mCustomImageSize = customImageSize || {};
+    let mCustomImageSize = customImageSize;
 
     if (!position) {
       return ImageMarker.addText(
