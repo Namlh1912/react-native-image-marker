@@ -225,7 +225,7 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 }
 
 
-UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground,NSDictionary* customImageSize){
+UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground,NSDictionary* customImageSize, NSDictionary* customTitlePos){
     
     int w = image.size.width;
     int h = image.size.height;
@@ -334,7 +334,7 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
     
-    CGSize labelSize = [title boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
+    CGSize titleSize = [title boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
                                             options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                          attributes:@{NSFontAttributeName: titleFont}
                                             context:nil].size;
@@ -344,8 +344,25 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
                                          attributes:@{NSFontAttributeName: subTitleFont}
                                             context:nil].size;
     
-    CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 200), labelSize };
-    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-subLabelSize.width)/2), 220+labelSize.height), subLabelSize };
+    //Title position center
+    float titlePosX = (screenWidth-titleSize.width)/2;
+    float titlePoxY = (screenHeight-titleSize.height)/2;
+    
+    //SubTitle position center and margin top 20
+    float subTitlePosX = (screenWidth-subLabelSize.width)/2;
+    float subTitlePosY = titlePoxY + titleSize.height + 20;
+    
+    if(customTitlePos[@"posX"] != nil){
+        titlePosX =[RCTConvert CGFloat:customTitlePos[@"posX"]];
+        subTitlePosX = titlePosX - 100;
+    }else if(customTitlePos[@"posY"] != nil){
+        titlePoxY =[RCTConvert CGFloat:customTitlePos[@"posY"]];
+    }
+    
+    
+    
+    CGRect titleRect = (CGRect){ CGPointMake(titlePosX, titlePoxY), titleSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(subTitlePosX, subTitlePosY), subLabelSize };
     
     [title drawInRect:titleRect withAttributes:titleAttr];
     [subTitle drawInRect:subTitleRect withAttributes:subTitleAttr];
@@ -507,6 +524,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   titleStyle: (nonnull NSDictionary *)titleStyle
                   subTitleStyle: (NSDictionary *)subTitleStyle
                   customImageSize: (NSDictionary *)customImageSize
+                  customTitlePos: (NSDictionary *)customTitlePos
                   position:(MarkerPosition)position
                   color:(NSString*)color
                   fontName:(NSString*)fontName
@@ -561,7 +579,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
         NSShadow* shadow = [self getShadowStyle: shadowStyle];
         TextBackground* textBackground = [self getTextBackgroundStyle: textBackgroundStyle];
 
-        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor,subTitleFont,subTitleColor, scale, shadow, textBackground,customImageSize);
+        UIImage * scaledImage = markerImgWithTextByPostion(image,title,subTitle, text, position, uiColor, font,titleFont, titleColor,subTitleFont,subTitleColor, scale, shadow, textBackground,customImageSize, customTitlePos);
         if (scaledImage == nil) {
             NSLog(@"Can't mark the image");
             reject(@"error",@"Can't mark the image.", error);

@@ -62,6 +62,11 @@ export type CustomImageSize = {
   height: number;
 };
 
+export type CustomTitlePos = {
+  posX: number;
+  posY: number;
+};
+
 export type TextMarkOption = {
   // image src, local image
   src: ImageSourcePropType;
@@ -71,6 +76,7 @@ export type TextMarkOption = {
   titleStyle: TitleStyle;
   subTitleStyle: SubTitleStyle;
   customImageSize: CustomImageSize;
+  customTitlePos: CustomTitlePos;
   // if you set position you don't need to set X and Y
   X?: number;
   Y?: number;
@@ -127,6 +133,7 @@ export default class Marker {
       titleStyle,
       subTitleStyle,
       customImageSize,
+      customTitlePos,
       maxSize = 2048,
     } = option;
 
@@ -180,6 +187,7 @@ export default class Marker {
         fontSize,
         mShadowStyle,
         mTextBackgroundStyle,
+        customTitlePos,
         scale,
         quality,
         filename,
