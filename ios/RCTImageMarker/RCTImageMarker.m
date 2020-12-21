@@ -226,26 +226,30 @@ UIImage * markeImageWithImageByPostion(UIImage *image, UIImage * waterImage, Mar
 
 
 UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSString* subTitle,NSString* text, MarkerPosition position, UIColor* color, UIFont* font, UIFont* titleFont,UIColor* titleColor,UIFont* subTitleFont,UIColor* subTitleColor, CGFloat scale, NSShadow* shadow, TextBackground* textBackground,NSDictionary* customImageSize){
+    
     int w = image.size.width;
     int h = image.size.height;
 //    CGFloat horizontalRatio = image.size.width / self.size.width;
 //        CGFloat verticalRatio = image.size.height / self.size.height;
 //        CGFloat ratio;
     
+    //Get device width & height
     CGRect sizeBound = [UIScreen mainScreen].bounds;
    //CGRect sizeRect = [UIScreen mainScreen].applicationFrame;
     float screenWidth = sizeBound.size.width;
     float screenHeight = sizeBound.size.height;
     
+    //Check if custom images size exist
     if(customImageSize!=nil){
         screenWidth = [RCTConvert CGFloat:customImageSize[@"width"]];
         screenHeight = [RCTConvert CGFloat:customImageSize[@"height"]];
     }
     
     CGFloat newScale = MAX(screenWidth/image.size.width, screenHeight/image.size.height);
-        CGFloat newImgWidth = image.size.width * newScale;
-        CGFloat newImgHeight = image.size.height * newScale;
+    CGFloat newImgWidth = image.size.width * newScale;
+    CGFloat newImgHeight = image.size.height * newScale;
     
+    //Draw image at center
     CGRect imageRect = CGRectMake((screenWidth - newImgWidth)/2.0f,
                                       (screenHeight - newImgHeight)/2.0f,
                                   newImgWidth,
@@ -256,26 +260,29 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     paragraphStyle.alignment = NSTextAlignmentCenter;
     
     NSDictionary *attr = @{
-                           NSFontAttributeName: font,   //设置字体
-                           NSForegroundColorAttributeName : color,      //设置字体颜色
+                           NSFontAttributeName: font,
+                           NSForegroundColorAttributeName : color,
                            NSShadowAttributeName : shadow
                            };
+    
     NSDictionary *titleAttr = @{
-        NSFontAttributeName: titleFont,   //设置字体
-        NSForegroundColorAttributeName : titleColor,      //设置字体颜色
+                           NSFontAttributeName: titleFont,
+                           NSForegroundColorAttributeName : titleColor,
                            NSShadowAttributeName : shadow,
                            NSParagraphStyleAttributeName:paragraphStyle
                            };
+    
     NSDictionary *subTitleAttr = @{
-        NSFontAttributeName: subTitleFont,   //设置字体
-        NSForegroundColorAttributeName : subTitleColor,      //设置字体颜色
+                           NSFontAttributeName: subTitleFont,
+                           NSForegroundColorAttributeName : subTitleColor,
                            NSShadowAttributeName : shadow,
                            NSParagraphStyleAttributeName:paragraphStyle
                            };
     
     CGSize size = [text sizeWithAttributes:attr];
     
-        CGSize newSize = CGSizeMake(screenWidth, screenHeight);
+    //new size for bitmap
+    CGSize newSize = CGSizeMake(screenWidth, screenHeight);
     UIGraphicsBeginImageContextWithOptions(newSize, NO, scale);
     [image drawInRect:imageRect];
 
@@ -326,16 +333,20 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
 //    }
 
     CGRect rect = (CGRect){ CGPointMake(posX, posY), size };
+    
     CGSize labelSize = [title boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
                                             options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                          attributes:@{NSFontAttributeName: titleFont}
                                             context:nil].size;
-    CGSize subLabelSize = [subTitle boundingRectWithSize:CGSizeMake(300.f, CGFLOAT_MAX)
+    
+    CGSize subLabelSize = [subTitle boundingRectWithSize:CGSizeMake(200.f, CGFLOAT_MAX)
                                             options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                          attributes:@{NSFontAttributeName: subTitleFont}
                                             context:nil].size;
-       CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
+    
+    CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
     CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-subLabelSize.width)/2), 120+labelSize.height), subLabelSize };
+    
     [title drawInRect:titleRect withAttributes:titleAttr];
     [subTitle drawInRect:subTitleRect withAttributes:subTitleAttr];
     [text drawInRect:rect withAttributes:attr];
@@ -510,7 +521,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    //这里之前是loadImageOrDataWithTag
+    //loadImageOrDataWithTag
     [[self.bridge moduleForName:@"ImageLoader"] loadImageWithURLRequest:[RCTConvert NSURLRequest:src] callback:^(NSError *error, UIImage *image) {
         if (error || image == nil) {
             NSString* path = src[@"uri"];
@@ -526,6 +537,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
             }
         }
         
+        //Custom title font size
         UIFont* titleFont=[UIFont fontWithName:fontName size:fontSize];
         UIColor* titleColor=[self getColor:color];
         if(titleStyle!= nil){
@@ -534,6 +546,7 @@ RCT_EXPORT_METHOD(addTextByPostion: (nonnull NSDictionary *)src
             titleColor = [self getColor:titleStyle[@"color"]];
         }
         
+        //Custom sub title font size
         UIFont* subTitleFont=[UIFont fontWithName:fontName size:fontSize];
         UIColor* subTitleColor=[self getColor:color];
         if(subTitleStyle!= nil){
