@@ -354,12 +354,12 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
     
     if(customTitlePos[@"posX"] != nil){
         titlePosX =[RCTConvert CGFloat:customTitlePos[@"posX"]];
-        subTitlePosX = titlePosX - 100;
-    }else if(customTitlePos[@"posY"] != nil){
-        titlePoxY =[RCTConvert CGFloat:customTitlePos[@"posY"]];
+        subTitlePosX = titlePosX + 100;
     }
-    
-    
+    if(customTitlePos[@"posY"] != nil){
+        titlePoxY =[RCTConvert CGFloat:customTitlePos[@"posY"]];
+        subTitlePosY = titlePoxY + titleSize.height + 20;
+    }
     
     CGRect titleRect = (CGRect){ CGPointMake(titlePosX, titlePoxY), titleSize };
     CGRect subTitleRect = (CGRect){ CGPointMake(subTitlePosX, subTitlePosY), subLabelSize };
