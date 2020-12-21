@@ -344,8 +344,8 @@ UIImage * markerImgWithTextByPostion    (UIImage *image,NSString* title, NSStrin
                                          attributes:@{NSFontAttributeName: subTitleFont}
                                             context:nil].size;
     
-    CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 100), labelSize };
-    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-subLabelSize.width)/2), 120+labelSize.height), subLabelSize };
+    CGRect titleRect = (CGRect){ CGPointMake(((screenWidth-labelSize.width)/2), 200), labelSize };
+    CGRect subTitleRect = (CGRect){ CGPointMake(((screenWidth-subLabelSize.width)/2), 220+labelSize.height), subLabelSize };
     
     [title drawInRect:titleRect withAttributes:titleAttr];
     [subTitle drawInRect:subTitleRect withAttributes:subTitleAttr];
