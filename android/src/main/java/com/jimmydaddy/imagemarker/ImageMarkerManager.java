@@ -298,6 +298,13 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
     private void markImageByText(
             Bitmap bg,
             String mark,
+            //Add  title & subtitle
+            String title, 
+            String subtitle,
+            TextStyle titleStyle,
+            TextStyle subTitleStyle,
+
+
             String position,
             String color,
             String fontName,
@@ -338,8 +345,9 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                 System.gc();
             }
 
-            //设置画笔
-            //建立画笔
+            TextPaint titlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
+            TextPaint subTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
+
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
             textPaint.setAntiAlias(true);
             if (null != shadowLayerStyle) {
@@ -355,6 +363,27 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
             Integer fSize = 14;
             if (fontSize != null){
                 fSize = fontSize;
+            }
+
+            //Add size for title & subtitle
+            titlePaint.setTextSize(18);
+            subTitlePaint.setTextSize(16);
+
+            //Add color for title & subtitle
+            titlePaint.setColor(Color.parseColor(transRGBColor(color)));
+            subTitlePaint.setColor(Color.parseColor(transRGBColor(color)));
+
+
+            
+
+            StaticLayout titleLayout = new StaticLayout(mark, titlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+            StaticLayout subTitleLayout = new StaticLayout(mark, subTitlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+
+            int titleHeight = titleLayout.getHeight();
+            int titleWidth =  0;
+            int countTitle = titleLayout.getLineCount();
+            for (int a = 0; a < count; a++) {
+                titleWidth = (int) Math.ceil(Math.max(titleWidth, titleLayout.getLineWidth(a) + titleLayout.getLineLeft(a)));
             }
 
             textPaint.setTextSize(fSize);
@@ -416,6 +445,8 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
             }
             canvas.save();
             canvas.translate(x, y);
+            titleLayout.draw(canvas);
+            subTitleLayout.draw(canvas);
             textLayout.draw(canvas);
             canvas.restore();
 
@@ -569,6 +600,16 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
     public void addTextByPostion(
             ReadableMap src,
             final String mark,
+            //Add title & subtitle
+            final String title,
+            final String subtitle,
+            ReadableMap titleStyle,
+            ReadableMap subTitleStyle,
+            ReadableMap customImageSize,
+            ReadableMap customTitlePos,
+
+            ReadableMap shadowStyle,
+            ReadableMap textBackgroundStyle,
             final String position,
             final String color,
             final String fontName,
@@ -593,6 +634,8 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
 
             final ShadowLayerStyle myShadowStyle  = null != shadowStyle? new ShadowLayerStyle(shadowStyle) : null;
             final TextBackgroundStyle myTextBackgroundStyle  = null != textBackgroundStyle ? new TextBackgroundStyle(textBackgroundStyle) : null;
+            final TextStyle myTitleStyle = null != titleStyle ? new TextStyle(titleStyle):null;
+            final TextStyle mySubTitleStyle = null != titleStyle ? new TextStyle(subTitleStyle):null;
 
 
             Log.d(IMAGE_MARKER_TAG, uri);
@@ -610,7 +653,7 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                     public void onNewResultImpl(Bitmap bitmap) {
                         if (bitmap != null) {
                             Bitmap bg = Utils.scaleBitmap(bitmap, scale);
-                            markImageByText(bg, mark, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
+                            markImageByText(bg, mark,title, subtitle, myTitleStyle,mySubTitleStyle, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
                         } else {
                             promise.reject( "marker error","Can't retrieve the file from the src: " + uri);
                         }
