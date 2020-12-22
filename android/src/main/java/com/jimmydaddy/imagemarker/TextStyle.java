@@ -1,5 +1,9 @@
 package com.jimmydaddy.imagemarker;
 
+import android.graphics.Color;
+import android.util.Log;
+import com.facebook.react.bridge.ReadableMap;
+
 public class TextStyle {
     public String fontName;
     public String color;

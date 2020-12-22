@@ -297,10 +297,11 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
      */
     private void markImageByText(
             Bitmap bg,
-            String mark,
             //Add  title & subtitle
             String title, 
             String subtitle,
+
+            String mark,
             TextStyle titleStyle,
             TextStyle subTitleStyle,
 
@@ -382,7 +383,7 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
             int titleHeight = titleLayout.getHeight();
             int titleWidth =  0;
             int countTitle = titleLayout.getLineCount();
-            for (int a = 0; a < count; a++) {
+            for (int a = 0; a < countTitle; a++) {
                 titleWidth = (int) Math.ceil(Math.max(titleWidth, titleLayout.getLineWidth(a) + titleLayout.getLineLeft(a)));
             }
 
@@ -599,10 +600,11 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
     @ReactMethod
     public void addTextByPostion(
             ReadableMap src,
-            final String mark,
             //Add title & subtitle
             final String title,
             final String subtitle,
+
+            final String mark,
             ReadableMap titleStyle,
             ReadableMap subTitleStyle,
             ReadableMap customImageSize,
@@ -651,7 +653,7 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                     public void onNewResultImpl(Bitmap bitmap) {
                         if (bitmap != null) {
                             Bitmap bg = Utils.scaleBitmap(bitmap, scale);
-                            markImageByText(bg, mark,title, subtitle, myTitleStyle,mySubTitleStyle, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
+                            markImageByText(bg, title, subtitle,mark, myTitleStyle,mySubTitleStyle, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
                         } else {
                             promise.reject( "marker error","Can't retrieve the file from the src: " + uri);
                         }
@@ -682,7 +684,7 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                         bitmap.recycle();
                         System.gc();
                     }
-                    markImageByText(bg, mark,null, null, null,null, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
+                    markImageByText(bg, title, subtitle,mark, null,null, position, color, fontName, fontSize, myShadowStyle, myTextBackgroundStyle, null, null, quality, dest, saveFormat, promise);
                 }
             }
         } catch (Exception e) {
