@@ -1,3 +1,5 @@
+package com.jimmydaddy.imagemarker;
+
 public class TextStyle {
     public String fontName;
     public String color;
@@ -7,6 +9,18 @@ public class TextStyle {
         this.fontName = fontName;
         this.color = color;
         this.fontSize = fontSize;
+    }
+
+    public TextStyle(ReadableMap readableMap) {
+        if (null != readableMap) {
+            try {
+                this.setFontName(readableMap.getString("fontName"));                
+                this.setFontSize((int) readableMap.getInt("fontSize"));
+                this.setColor(readableMap.getString("color"));
+            } catch (Exception e) {
+                Log.d(Utils.TAG, "Unknown text background options ", e);
+            }
+        }
     }
 
     public String getFontName() {
