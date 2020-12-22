@@ -444,11 +444,24 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                     x + textWidth + textBackgroundStyle.paddingX, y + textHeight + textBackgroundStyle.paddingY, paint);
                 }
             }
+
+//            canvas.drawText(title, 100, 300, titleLayout);
+//            canvas.drawText(subtitle, 100, 450, subTitleLayout);
+
+
             canvas.save();
             canvas.translate(x, y);
-            titleLayout.draw(canvas);
-            subTitleLayout.draw(canvas);
             textLayout.draw(canvas);
+            canvas.restore();
+
+            canvas.save();
+            canvas.translate(100, 300);
+            titleLayout.draw(canvas);
+            canvas.restore();
+
+            canvas.save();
+            canvas.translate(150, 300+ titleLayout.getHeight());
+            subTitleLayout.draw(canvas);
             canvas.restore();
 
             if (dest.equals(BASE64)) {
