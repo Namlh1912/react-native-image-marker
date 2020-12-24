@@ -377,14 +377,21 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
 
             
 
-            StaticLayout titleLayout = new StaticLayout(mark, titlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-            StaticLayout subTitleLayout = new StaticLayout(mark, subTitlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+            StaticLayout titleLayout = new StaticLayout(title, titlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+            StaticLayout subTitleLayout = new StaticLayout(subtitle, subTitlePaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
 
             int titleHeight = titleLayout.getHeight();
             int titleWidth =  0;
             int countTitle = titleLayout.getLineCount();
             for (int a = 0; a < countTitle; a++) {
                 titleWidth = (int) Math.ceil(Math.max(titleWidth, titleLayout.getLineWidth(a) + titleLayout.getLineLeft(a)));
+            }
+
+            int subTitleHeight = subTitleLayout.getHeight();
+            int subTitleWidth =  0;
+            int countSubTitle = subTitleLayout.getLineCount();
+            for (int a = 0; a < countSubTitle; a++) {
+                subTitleWidth = (int) Math.ceil(Math.max(subTitleWidth, subTitleLayout.getLineWidth(a) + subTitleLayout.getLineLeft(a)));
             }
 
             textPaint.setTextSize(fSize);
@@ -445,8 +452,8 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                 }
             }
 
-//            canvas.drawText(title, 100, 300, titleLayout);
-//            canvas.drawText(subtitle, 100, 450, subTitleLayout);
+//            canvas.drawText(title, 100, 300, titlePaint);
+//            canvas.drawText(subtitle, 100, 450, subTitlePaint);
 
 
             canvas.save();
@@ -455,12 +462,12 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
             canvas.restore();
 
             canvas.save();
-            canvas.translate(100, 300);
+            canvas.translate((width - titleWidth) / 2, 300);
             titleLayout.draw(canvas);
             canvas.restore();
 
             canvas.save();
-            canvas.translate(150, 300+ titleLayout.getHeight());
+            canvas.translate((width - subTitleWidth) / 2, 300+ titleLayout.getHeight());
             subTitleLayout.draw(canvas);
             canvas.restore();
 
@@ -817,12 +824,33 @@ public class ImageMarkerManager extends ReactContextBaseJavaModule {
                 }
                 DataSource<CloseableReference<CloseableImage>> dataSource = getImagePipeline().fetchDecodedImage(imageRequest, null);
                 Executor executor = Executors.newSingleThreadExecutor();
+
+Bitmap dstBmp =  dstBmp = Bitmap.createBitmap(
+     bg,
+     0, 
+     bg.getHeight()/2 - bg.getWidth()/2,
+     bg.getWidth(),
+     bg.getWidth() 
+     );;
+                if (bg.getWidth() >= bg.getHeight()){
+
+
+  dstBmp = Bitmap.createBitmap(
+     bg, 
+     bg.getWidth()/2 - bg.getHeight()/2,
+     0,
+     bg.getHeight(), 
+     bg.getHeight()
+     );
+
+}
+
                 dataSource.subscribe(new BaseBitmapDataSubscriber() {
                     @Override
                     public void onNewResultImpl(Bitmap bitmap) {
                         if (bitmap != null) {
                             Bitmap bg = Utils.scaleBitmap(bitmap, scale);
-                            markImage(bg, marker, position, 0, 0, markerScale, quality, dest, saveFormat, promise);
+                            markImage(dstBmp, marker, position, 0, 0, markerScale, quality, dest, saveFormat, promise);
                         } else {
                             promise.reject( "marker error","Can't retrieve the file from the src: " + uri);
                         }
